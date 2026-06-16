@@ -1,0 +1,95 @@
+export type FontWeight = 'Light' | 'Regular' | 'Medium' | 'Semibold' | 'Bold';
+
+export interface TypographyStyle {
+  fontSize: number;
+  lineHeight: number;
+}
+
+export const fontWeightMap: Record<FontWeight, number> = {
+  Light: 300,
+  Regular: 400,
+  Medium: 500,
+  Semibold: 600,
+  Bold: 700,
+};
+
+/**
+ * Base typography tokens (100% scale, no accessibility scaling)
+ * Token -> { fontSize, lineHeight } in px
+ */
+export const typographyTokens = {
+  Typography1: { fontSize: 30, lineHeight: 40 },
+  subTypography1: { fontSize: 29, lineHeight: 38 },
+  subTypography2: { fontSize: 28, lineHeight: 37 },
+  subTypography3: { fontSize: 27, lineHeight: 36 },
+  Typography2: { fontSize: 26, lineHeight: 35 },
+  subTypography4: { fontSize: 25, lineHeight: 34 },
+  subTypography5: { fontSize: 24, lineHeight: 33 },
+  subTypography6: { fontSize: 23, lineHeight: 32 },
+  Typography3: { fontSize: 22, lineHeight: 31 },
+  subTypography7: { fontSize: 21, lineHeight: 30 },
+  Typography4: { fontSize: 20, lineHeight: 29 },
+  subTypography8: { fontSize: 19, lineHeight: 28 },
+  subTypography9: { fontSize: 18, lineHeight: 27 },
+  Typography5: { fontSize: 17, lineHeight: 25.5 },
+  subTypography10: { fontSize: 16, lineHeight: 24 },
+  Typography6: { fontSize: 15, lineHeight: 22.5 },
+  subTypography11: { fontSize: 14, lineHeight: 21 },
+  Typography7: { fontSize: 13, lineHeight: 19.5 },
+  subTypography12: { fontSize: 12, lineHeight: 18 },
+  subTypography13: { fontSize: 11, lineHeight: 16.5 },
+} as const satisfies Record<string, TypographyStyle>;
+
+export type TypographyToken = keyof typeof typographyTokens;
+
+/**
+ * iOS accessibility scaling steps
+ * Maps scale ratio to per-token font size overrides
+ */
+export const iosScaleTable: Record<string, Partial<Record<TypographyToken, number>>> = {
+  '1.10': {
+    Typography1: 32, subTypography1: 31, subTypography2: 30, subTypography3: 29,
+    Typography2: 28, subTypography4: 27, subTypography5: 26, subTypography6: 25,
+    Typography3: 24, subTypography7: 23, Typography4: 22, subTypography8: 21,
+    subTypography9: 20, Typography5: 19, subTypography10: 18, Typography6: 17,
+    subTypography11: 16, Typography7: 15, subTypography12: 14, subTypography13: 13,
+  },
+  '1.20': {
+    Typography1: 34, subTypography1: 33, subTypography2: 32, subTypography3: 31,
+    Typography2: 30, subTypography4: 29, subTypography5: 28, subTypography6: 27,
+    Typography3: 26, subTypography7: 25, Typography4: 24, subTypography8: 23,
+    subTypography9: 22, Typography5: 21, subTypography10: 20, Typography6: 19,
+    subTypography11: 18, Typography7: 17, subTypography12: 16, subTypography13: 15,
+  },
+  '1.35': {
+    Typography1: 36, subTypography1: 35, subTypography2: 34, subTypography3: 33,
+    Typography2: 32, subTypography4: 31, subTypography5: 30, subTypography6: 29,
+    Typography3: 28, subTypography7: 27, Typography4: 26, subTypography8: 25,
+    subTypography9: 24, Typography5: 23, subTypography10: 22, Typography6: 21,
+    subTypography11: 20, Typography7: 19, subTypography12: 18, subTypography13: 17,
+  },
+  '1.60': {
+    Typography1: 40, subTypography1: 39, subTypography2: 38, subTypography3: 37,
+    Typography2: 36, subTypography4: 36, subTypography5: 35, subTypography6: 34,
+    Typography3: 33, subTypography7: 32, Typography4: 31, subTypography8: 30,
+    subTypography9: 28, Typography5: 27, subTypography10: 26, Typography6: 24,
+    subTypography11: 23, Typography7: 21, subTypography12: 20, subTypography13: 19,
+  },
+};
+
+/**
+ * Android max font sizes per token
+ */
+export const androidMaxFontSize: Record<TypographyToken, number> = {
+  Typography1: 42, subTypography1: 42, subTypography2: 41, subTypography3: 41,
+  Typography2: 41, subTypography4: 41, subTypography5: 40, subTypography6: 40,
+  Typography3: 40, subTypography7: 40, Typography4: 40, subTypography8: 40,
+  subTypography9: 39, Typography5: 39, subTypography10: 39, Typography6: 37,
+  subTypography11: 36, Typography7: 34, subTypography12: 32, subTypography13: 31,
+};
+
+export function getAndroidFontSize(token: TypographyToken, scalePercent: number): number {
+  const base = typographyTokens[token].fontSize;
+  const scaled = base * scalePercent * 0.01;
+  return Math.min(Math.round(scaled), androidMaxFontSize[token]);
+}
